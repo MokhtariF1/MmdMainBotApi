@@ -9,10 +9,10 @@ app = FastAPI()
 
 
 @app.get("/get-service/")
-async def get_service(number):
+async def get_service(number, user_id):
     try:
-        username, password, client_id = await helper.get_service(num=number)
-        if username is None or password is None or client_id is None:
+        username, password = await helper.get_service(num=int(number), user_id=user_id)
+        if username is None or password is None:
             response = {
                 "status": 500,
             }
@@ -22,7 +22,6 @@ async def get_service(number):
                 "status": 200,
                 "username": username,
                 "password": password,
-                "client_id": client_id
             }
             text = f"""✅ #سرویس جدید
 ➖➖➖➖➖➖➖➖➖
@@ -39,9 +38,9 @@ async def get_service(number):
         return Response(json.dumps(response), 500)
 
 @app.get("/service-extension/")
-async def service_extension(client_id, number):
+async def service_extension(number, username):
     try:
-        status = await helper.service_extension(client_id=client_id, plan_id=number)
+        status = await helper.service_extension(plan_id=int(number), username=username)
         if status is None:
             response = {
                 "status": 500,
@@ -78,22 +77,35 @@ async def client_info_http(username):
             }
             return Response(json.dumps(response), 500)
         else:
-            if status == 500:
-                response = {
-                    "message": "an error to get service details!",
-                    "status": 500,
-                }
-                return Response(json.dumps(response), 500)
-            else:
-                response = {
-                    "message": "plan finded!",
-                    "info": status,
-                    "status": 200,
-                }       
-                return Response(json.dumps(response), 200)
+            response = {
+                "message": "plan finded!",
+                "info": status,
+                "status": 200,
+            }
+            return Response(json.dumps(response), 200)
     except Exception as e:
         print(e)
         response = {
             "status": 500,
         }
         return Response(json.dumps(response), 500)
+
+
+@app.get("/get-service-iphone/")
+async def get_service_iphone(data_limit, expire):
+    expire = int(expire) * 86400
+    data_limit = int(data_limit)
+    username, sub = await helper.get_iphone_service(expire, data_limit)
+    if username is None:
+        response = {
+            "status": 500,
+            "message": "cant make service"
+        }
+        return Response(json.dumps(response), 500)
+    else:
+        response = {
+            "status": 200,
+            "username": username,
+            "sub_link": sub,
+        }
+        return Response(json.dumps(response), 200)
