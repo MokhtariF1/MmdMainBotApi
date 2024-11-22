@@ -1,36 +1,7 @@
-# from playwright.async_api import async_playwright
-# import asyncio
-# import config
-
-
-# async def get_service(num):
-#     async with async_playwright() as p:
-#         browser = await p.chromium.launch(headless=True, slow_mo=80)
-#         page = await browser.new_page()
-#         await page.goto("https://seller.connectix.vip/")
-#         await page.get_by_label("Email").fill(config.EMAIL)
-#         await page.get_by_label("Password").fill(config.PASSWORD)
-#         await page.get_by_role("button", name="Login").click()
-#         await page.get_by_role("link", name="Accounts").click()
-#         await page.get_by_role("button", name="Create").click()
-#         element_handle = await page.query_selector('input[placeholder="Client Password"]')
-#         pass_wd = await page.evaluate('(element) => element.value', element_handle)
-#         await page.get_by_label("PlanYou can add a plan(1x)").select_option(value=config.plans_json[int(num)])
-#         await page.locator("#modalSection").get_by_role("button", name="Create").click()
-#         username = await page.inner_html("span.mb-1.v-popper--has-tooltip")
-#         return username, pass_wd
-
 import requests
-import json
 import string
-
-from g4f.Provider.openai.har_file import headers
-from pygame.display import update
-
 import config
 import random
-
-from config import data_limits
 
 
 async def get_service(num, user_id):
