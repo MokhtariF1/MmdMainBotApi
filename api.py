@@ -69,6 +69,7 @@ async def service_extension(number, username):
 
 @app.get("/client-info/")
 async def client_info_http(username):
+    print(username)
     try:
         status = await helper.client_info(username)
         if status is None:

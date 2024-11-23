@@ -246,6 +246,7 @@ async def client_info(username):
     #         response = response.json()
     #         data = response["clients"]["data"][0]
     #         return data
+    print(username)
     user_data = f"{config.API_ADDRESS}?method=data_user&name={username}&ADMIN=SpeedConnect"
     user_data = requests.get(user_data).json()
     print(user_data)
