@@ -99,8 +99,8 @@ async def get_service(num, user_id):
         expire = config.expire_dates[num]
         total = config.data_limits[num]
         multi = config.user_counts[num]
-    username = f"user_{random.choice(string.ascii_letters)}_{random.randint(1000, 9999)}"
-    password = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(12))
+    username = f"user{random.choice(string.ascii_letters)}{random.randint(1000, 9999)}"
+    password = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(5))
     url = (f"{config.API_ADDRESS}?method=new_user&name={username}&pass={password}&total={total}&day={expire}&"
            f"id_from={user_id}&from_id={user_id}&price={int(price)}&multi={multi}")
     response = requests.get(url)
@@ -275,8 +275,7 @@ async def get_iphone_service(expire, data_limit):
         "password": "mmd",
     }
     login_token = requests.post(f"{config.MARZBAN_API_URL}admin/token", data=login_body).json()["access_token"]
-    print(login_token)
-    username = f"user_{random.choice(string.ascii_letters)}_{random.randint(1000, 9999)}"
+    username = f"user{random.choice(string.ascii_letters)}{random.randint(1000, 9999)}"
     headers = {
         "accept": "application/json",
         "Authorization": f"Bearer {login_token}",
