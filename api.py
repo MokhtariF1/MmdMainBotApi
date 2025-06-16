@@ -11,7 +11,7 @@ app = FastAPI()
 @app.get("/get-service/")
 async def get_service(number, user_id):
     try:
-        username, password = await helper.get_service(num=int(number), user_id=user_id)
+        username, password, client_id = await helper.get_service(num=int(number), user_id=user_id)
         if username is None or password is None:
             response = {
                 "status": 500,

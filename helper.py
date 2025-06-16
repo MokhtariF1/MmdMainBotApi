@@ -2,113 +2,114 @@ import requests
 import string
 import config
 import random
-
+import json
 
 async def get_service(num, user_id):
-    # # Define the URL
-    # url = "https://api.connectix.vip/v1/seller/auth/login"
-    #
-    # # Define the headers
-    # headers = {
-    #     "Host": "api.connectix.vip",
-    #     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:129.0) Gecko/20100101 Firefox/129.0",
-    #     "Accept": "application/json, text/plain, */*",
-    #     "Accept-Language": "en-US,en;q=0.5",
-    #     "Content-Type": "application/json",
-    #     "Access-Control-Allow-Origin": "*",
-    #     "Origin": "https://seller.connectix.vip",
-    #     "Connection": "keep-alive",
-    #     "Referer": "https://seller.connectix.vip/",
-    #     "Sec-Fetch-Dest": "empty",
-    #     "Sec-Fetch-Mode": "cors",
-    #     "Sec-Fetch-Site": "same-site",
-    #     "Priority": "u=0",
-    #     "TE": "trailers"
-    # }
-    #
-    # # Define the parameters
-    # data = {
-    #     "email": "speedconnect2962@connectix.panel",
-    #     "password": "%2kZpMtsx@R8qPE7pN!Brq4wPKYc^#",
-    #     "rememberMe": False,
-    #     "device_browser": "Firefox",
-    #     "device_os": "Windows"
-    # }
-    #
-    # # Make the POST request
-    # response = requests.post(url, headers=headers, data=json.dumps(data))
-    # print(response.json())
-    # if response.status_code != 200:
-    #     return None, None
-    # else:
-    #     response_token = response.json()["token"]
-    #     url = "https://api.connectix.vip/v1/seller/clients/store"
-    #
-    #     # Define the headers
-    #     headers = {
-    #         "Host": "api.connectix.vip",
-    #         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:129.0) Gecko/20100101 Firefox/129.0",
-    #         "Accept": "application/json, text/plain, */*",
-    #         "Accept-Language": "en-US,en;q=0.5",
-    #         "Content-Type": "application/json",
-    #         "Access-Control-Allow-Origin": "*",
-    #         "Authorization": f"Bearer {response_token}",
-    #         "Origin": "https://seller.connectix.vip",
-    #         "Connection": "keep-alive",
-    #         "Referer": "https://seller.connectix.vip/",
-    #         "Sec-Fetch-Dest": "empty",
-    #         "Sec-Fetch-Mode": "cors",
-    #         "Sec-Fetch-Site": "same-site",
-    #         "Priority": "u=0",
-    #         "TE": "trailers"
-    #     }
-    #
-    #     # initializing size of string
-    #     N = 5
-    #
-    #     # using random.choices()
-    #     # generating random strings
-    #     res = ''.join(random.choices(string.ascii_lowercase +
-    #                                  string.digits, k=N))
-    #     data = {
-    #         "password": str(res),
-    #         "plan_id": config.plans_json[int(num)],
-    #         "enable_plan_after_first_login": True
-    #     }
-    #
-    #     # Make the POST request
-    #     response = requests.post(url, headers=headers, data=json.dumps(data))
-    #     response = response.json()
-    #     if response["message"] == "client has been created":
-    #         text_to_copy = response["text_to_copy"]
-    #         username = text_to_copy.split("\n")[2][text_to_copy.split("\n")[2].index("username: ") + 11:].replace("`",
-    #                                                                                                               "")
-    #         password = text_to_copy.split("\n")[3][text_to_copy.split("\n")[3].index("password: ") + 11:].replace("`",
-    #                                                                                                               "")
-    #         return username, password, response["client_id"]
-    #     else:
-    #         print(response)
-    #         return None, None, None
-    if num == 1:
-        price = 0
-        expire = 1
-        total = 1
-        multi = 1
-    else:
-        price = config.amounts[num]
-        expire = config.expire_dates[num]
-        total = config.data_limits[num]
-        multi = config.user_counts[num]
-    username = ''.join(random.choices(string.ascii_letters, k=10))
-    password = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(5))
-    url = (f"{config.API_ADDRESS}?method=new_user&name={username}&pass={password}&total={total}&day={expire}&"
-           f"id_from={user_id}&from_id={user_id}&price={int(price)}&multi={multi}")
-    response = requests.get(url)
-    print(response)
+    # Define the URL
+    url = "https://api.connectix.vip/v1/seller/auth/login"
+
+    # Define the headers
+    headers = {
+        "Host": "api.connectix.vip",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:129.0) Gecko/20100101 Firefox/129.0",
+        "Accept": "application/json, text/plain, */*",
+        "Accept-Language": "en-US,en;q=0.5",
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+        "Origin": "https://seller.connectix.vip",
+        "Connection": "keep-alive",
+        "Referer": "https://seller.connectix.vip/",
+        "Sec-Fetch-Dest": "empty",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Site": "same-site",
+        "Priority": "u=0",
+        "TE": "trailers"
+    }
+
+    # Define the parameters
+    data = {
+        "email": config.EMAIL,
+        "password": config.PASSWORD,
+        "rememberMe": False,
+        "device_browser": "Firefox",
+        "device_os": "Windows"
+    }
+
+    # Make the POST request
+    response = requests.post(url, headers=headers, data=json.dumps(data))
+    print(response.json())
     if response.status_code != 200:
         return None, None
     else:
-        return username, password
+        response_token = response.json()["token"]
+        url = "https://api.connectix.vip/v1/seller/clients/store"
+
+        # Define the headers
+        headers = {
+            "Host": "api.connectix.vip",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:129.0) Gecko/20100101 Firefox/129.0",
+            "Accept": "application/json, text/plain, */*",
+            "Accept-Language": "en-US,en;q=0.5",
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+            "Authorization": f"Bearer {response_token}",
+            "Origin": "https://seller.connectix.vip",
+            "Connection": "keep-alive",
+            "Referer": "https://seller.connectix.vip/",
+            "Sec-Fetch-Dest": "empty",
+            "Sec-Fetch-Mode": "cors",
+            "Sec-Fetch-Site": "same-site",
+            "Priority": "u=0",
+            "TE": "trailers"
+        }
+
+        # initializing size of string
+        N = 5
+
+        # using random.choices()
+        # generating random strings
+        res = ''.join(random.choices(string.ascii_lowercase +
+                                     string.digits, k=N))
+        data = {
+            "password": str(res),
+            "plan_id": config.plans_json[int(num)],
+            "enable_plan_after_first_login": True
+        }
+
+        # Make the POST request
+        response = requests.post(url, headers=headers, data=json.dumps(data))
+        response = response.json()
+        print("_____", response)
+        if response["message"] == "client has been created":
+            text_to_copy = response["text_to_copy"]
+            username = text_to_copy.split("\n")[2][text_to_copy.split("\n")[2].index("username: ") + 11:].replace("`",
+                                                                                                                  "")
+            password = text_to_copy.split("\n")[3][text_to_copy.split("\n")[3].index("password: ") + 11:].replace("`",
+                                                                                                                  "")
+            return username, password, response["client_id"]
+        else:
+            # print(response)
+            return None, None, None
+    # if num == 1:
+    #     price = 0
+    #     expire = 1
+    #     total = 1
+    #     multi = 1
+    # else:
+    #     price = config.amounts[num]
+    #     expire = config.expire_dates[num]
+    #     total = config.data_limits[num]
+    #     multi = config.user_counts[num]
+    # username = ''.join(random.choices(string.ascii_letters, k=10))
+    # password = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(5))
+    # url = (f"{config.API_ADDRESS}?method=new_user&name={username}&pass={password}&total={total}&day={expire}&"
+    #        f"id_from={user_id}&from_id={user_id}&price={int(price)}&multi={multi}")
+    # response = requests.get(url)
+    # print(response)
+    # if response.status_code != 200:
+    #     return None, None
+    # else:
+    #     return username, password
 async def service_extension(plan_id, username):
     # url = "https://api.connectix.vip/v1/seller/auth/login"
     #
@@ -199,62 +200,62 @@ async def service_extension(plan_id, username):
         return 200
 
 async def client_info(username):
-    # url = "https://api.connectix.vip/v1/seller/auth/login"
-    #
-    # # Define the headers
-    # headers = {
-    #     "Host": "api.connectix.vip",
-    #     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:129.0) Gecko/20100101 Firefox/129.0",
-    #     "Accept": "application/json, text/plain, */*",
-    #     "Accept-Language": "en-US,en;q=0.5",
-    #     "Content-Type": "application/json",
-    #     "Access-Control-Allow-Origin": "*",
-    #     "Origin": "https://seller.connectix.vip",
-    #     "Connection": "keep-alive",
-    #     "Referer": "https://seller.connectix.vip/",
-    #     "Sec-Fetch-Dest": "empty",
-    #     "Sec-Fetch-Mode": "cors",
-    #     "Sec-Fetch-Site": "same-site",
-    #     "Priority": "u=0",
-    #     "TE": "trailers"
-    # }
-    #
-    # # Define the parameters
-    # data = {
-    #     "email": "speedconnect2962@connectix.panel",
-    #     "password": "%2kZpMtsx@R8qPE7pN!Brq4wPKYc^#",
-    #     "rememberMe": False,
-    #     "device_browser": "Firefox",
-    #     "device_os": "Windows"
-    # }
-    #
-    # # Make the POST request
-    # response = requests.post(url, headers=headers, data=json.dumps(data))
-    # if response.status_code != 200:
-    #     return 500
-    # else:
-    #     response_token = response.json()["token"]
-    #     url = f"https://api.connectix.vip/v1/seller/clients?username={username}"
-    #     headers = {
-    #         "Authorization": f"Bearer {response_token}",
-    #     }
-    #     response = requests.get(url, headers=headers)
-    #     print(response.status_code)
-    #     if response.status_code != 200:
-    #         return None
-    #     else:
-    #         response = response.json()
-    #         data = response["clients"]["data"][0]
-    #         return data
-    print(username)
-    user_data = f"{config.API_ADDRESS}?method=data_user&name={username}&ADMIN=SpeedConnect"
-    user_data = requests.get(user_data).json()
-    print(user_data)
-    try:
-        user_data["result"]
-        return None
-    except KeyError:
-        return user_data
+    url = "https://api.connectix.vip/v1/seller/auth/login"
+
+    # Define the headers
+    headers = {
+        "Host": "api.connectix.vip",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:129.0) Gecko/20100101 Firefox/129.0",
+        "Accept": "application/json, text/plain, */*",
+        "Accept-Language": "en-US,en;q=0.5",
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+        "Origin": "https://seller.connectix.vip",
+        "Connection": "keep-alive",
+        "Referer": "https://seller.connectix.vip/",
+        "Sec-Fetch-Dest": "empty",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Site": "same-site",
+        "Priority": "u=0",
+        "TE": "trailers"
+    }
+
+    # Define the parameters
+    data = {
+        "email": config.EMAIL,
+        "password": config.PASSWORD,
+        "rememberMe": False,
+        "device_browser": "Firefox",
+        "device_os": "Windows"
+    }
+
+    # Make the POST request
+    response = requests.post(url, headers=headers, data=json.dumps(data))
+    if response.status_code != 200:
+        return 500
+    else:
+        response_token = response.json()["token"]
+        url = f"https://api.connectix.vip/v1/seller/clients?username={username}"
+        headers = {
+            "Authorization": f"Bearer {response_token}",
+        }
+        response = requests.get(url, headers=headers)
+        print(response.status_code)
+        if response.status_code != 200:
+            return None
+        else:
+            response = response.json()
+            data = response["clients"]["data"][0]
+            return data
+    # print(username)
+    # user_data = f"{config.API_ADDRESS}?method=data_user&name={username}&ADMIN=SpeedConnect"
+    # user_data = requests.get(user_data).json()
+    # print(user_data)
+    # try:
+    #     user_data["result"]
+    #     return None
+    # except KeyError:
+    #     return user_data
 
 # تنظیمات تلگرام
 TELEGRAM_API_URL = f"https://api.telegram.org/bot{config.BOT_TOKEN}/sendMessage"
