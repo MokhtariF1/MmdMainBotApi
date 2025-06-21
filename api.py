@@ -78,6 +78,7 @@ async def client_info_http(username):
             }
             return Response(json.dumps(response), 500)
         else:
+            print(status)
             response = {
                 "message": "plan finded!",
                 "info": status,

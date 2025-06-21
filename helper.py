@@ -111,93 +111,94 @@ async def get_service(num, user_id):
     # else:
     #     return username, password
 async def service_extension(plan_id, username):
-    # url = "https://api.connectix.vip/v1/seller/auth/login"
-    #
-    # # Define the headers
-    # headers = {
-    #     "Host": "api.connectix.vip",
-    #     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:129.0) Gecko/20100101 Firefox/129.0",
-    #     "Accept": "application/json, text/plain, */*",
-    #     "Accept-Language": "en-US,en;q=0.5",
-    #     "Content-Type": "application/json",
-    #     "Access-Control-Allow-Origin": "*",
-    #     "Origin": "https://seller.connectix.vip",
-    #     "Connection": "keep-alive",
-    #     "Referer": "https://seller.connectix.vip/",
-    #     "Sec-Fetch-Dest": "empty",
-    #     "Sec-Fetch-Mode": "cors",
-    #     "Sec-Fetch-Site": "same-site",
-    #     "Priority": "u=0",
-    #     "TE": "trailers"
-    # }
-    #
-    # # Define the parameters
-    # data = {
-    #     "email": "speedconnect2962@connectix.panel",
-    #     "password": "%2kZpMtsx@R8qPE7pN!Brq4wPKYc^#",
-    #     "rememberMe": False,
-    #     "device_browser": "Firefox",
-    #     "device_os": "Windows"
-    # }
-    #
-    # # Make the POST request
-    # response = requests.post(url, headers=headers, data=json.dumps(data))
-    # if response.status_code != 200:
-    #     return 500
-    # else:
-    #     response_token = response.json()["token"]
-    #     url = "https://api.connectix.vip/v1/seller/clients/add-plan"
-    #
-    #     # Define the headers
-    #     headers = {
-    #         "Host": "api.connectix.vip",
-    #         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:129.0) Gecko/20100101 Firefox/129.0",
-    #         "Accept": "application/json, text/plain, */*",
-    #         "Accept-Language": "en-US,en;q=0.5",
-    #         "Content-Type": "application/json",
-    #         "Access-Control-Allow-Origin": "*",
-    #         "Authorization": f"Bearer {response_token}",
-    #         "Origin": "https://seller.connectix.vip",
-    #         "Connection": "keep-alive",
-    #         "Referer": "https://seller.connectix.vip/",
-    #         "Sec-Fetch-Dest": "empty",
-    #         "Sec-Fetch-Mode": "cors",
-    #         "Sec-Fetch-Site": "same-site",
-    #         "Priority": "u=0",
-    #         "TE": "trailers"
-    #     }
-    #
-    #     # Define the parameters
-    #     data = {
-    #         "id": client_id,
-    #         "plan_id": plan_id,
-    #     }
-    #
-    #     # Make the POST request
-    #     response = requests.post(url, headers=headers, data=json.dumps(data))
-    #
-    #     # Print the response
-    #     status = response.status_code
-    #     if status != 200:
-    #         return 500
-    #     else:
-    #         return 200
-    user_data = f"{config.API_ADDRESS}?method=data_user&name={username}&ADMIN=SpeedConnect"
-    user_data = requests.get(user_data).json()
-    # password_user = user_data["password"]
-    plan_total = config.data_limits[plan_id]
-    # plan_user_count = config.user_counts[plan_id]
-    plan_day = config.expire_dates[plan_id]
-    service_total = user_data["total"]
-    service_day = user_data["day"]
-    update_total = int(service_total) + int(plan_total)
-    update_day = int(service_day) + int(plan_day)
-    edit_user = f"{config.API_ADDRESS}?method=edit_user&name={username}&total={update_total}&day={update_day}&price={user_data['price']}"
-    response_update = requests.get(edit_user)
-    if response_update.status_code != 200:
-        return None
+    url = "https://api.connectix.vip/v1/seller/auth/login"
+
+    # Define the headers
+    headers = {
+        "Host": "api.connectix.vip",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:129.0) Gecko/20100101 Firefox/129.0",
+        "Accept": "application/json, text/plain, */*",
+        "Accept-Language": "en-US,en;q=0.5",
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+        "Origin": "https://seller.connectix.vip",
+        "Connection": "keep-alive",
+        "Referer": "https://seller.connectix.vip/",
+        "Sec-Fetch-Dest": "empty",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Site": "same-site",
+        "Priority": "u=0",
+        "TE": "trailers"
+    }
+
+    # Define the parameters
+    data = {
+        "email": config.EMAIL,
+        "password": config.PASSWORD,
+        "rememberMe": False,
+        "device_browser": "Firefox",
+        "device_os": "Windows"
+    }
+
+    # Make the POST request
+    response = requests.post(url, headers=headers, data=json.dumps(data))
+    # print(response.json())
+    if response.status_code != 200:
+        return 500
     else:
-        return 200
+        response_token = response.json()["token"]
+        url = "https://api.connectix.vip/v1/seller/clients/add-plan"
+
+        # Define the headers
+        headers = {
+            "Host": "api.connectix.vip",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:129.0) Gecko/20100101 Firefox/129.0",
+            "Accept": "application/json, text/plain, */*",
+            "Accept-Language": "en-US,en;q=0.5",
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+            "Authorization": f"Bearer {response_token}",
+            "Origin": "https://seller.connectix.vip",
+            "Connection": "keep-alive",
+            "Referer": "https://seller.connectix.vip/",
+            "Sec-Fetch-Dest": "empty",
+            "Sec-Fetch-Mode": "cors",
+            "Sec-Fetch-Site": "same-site",
+            "Priority": "u=0",
+            "TE": "trailers"
+        }
+
+        # Define the parameters
+        data = {
+            "id": username,
+            "plan_id": plan_id,
+        }
+
+        # Make the POST request
+        response = requests.post(url, headers=headers, data=json.dumps(data))
+        print(response.json())
+        # Print the response
+        status = response.status_code
+        if status != 200:
+            return 500
+        else:
+            return 200
+    # user_data = f"{config.API_ADDRESS}?method=data_user&name={username}&ADMIN=SpeedConnect"
+    # user_data = requests.get(user_data).json()
+    # # password_user = user_data["password"]
+    # plan_total = config.data_limits[plan_id]
+    # # plan_user_count = config.user_counts[plan_id]
+    # plan_day = config.expire_dates[plan_id]
+    # service_total = user_data["total"]
+    # service_day = user_data["day"]
+    # update_total = int(service_total) + int(plan_total)
+    # update_day = int(service_day) + int(plan_day)
+    # edit_user = f"{config.API_ADDRESS}?method=edit_user&name={username}&total={update_total}&day={update_day}&price={user_data['price']}"
+    # response_update = requests.get(edit_user)
+    # if response_update.status_code != 200:
+    #     return None
+    # else:
+    #     return 200
 
 async def client_info(username):
     url = "https://api.connectix.vip/v1/seller/auth/login"
