@@ -167,7 +167,7 @@ async def service_extension(plan_id, username):
             "Priority": "u=0",
             "TE": "trailers"
         }
-
+        plan_id = config.plans_json[int(plan_id)]
         # Define the parameters
         data = {
             "id": username,
