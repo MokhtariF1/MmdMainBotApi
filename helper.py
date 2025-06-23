@@ -173,7 +173,7 @@ async def service_extension(plan_id, username):
             "id": username,
             "plan_id": plan_id,
         }
-
+        print(data)
         # Make the POST request
         response = requests.post(url, headers=headers, data=json.dumps(data))
         print(response.json())
