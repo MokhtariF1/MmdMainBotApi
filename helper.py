@@ -29,9 +29,9 @@ def execute_with_retry(db_path, query, params=(), max_retries=3):
         try:
             with sqlite_connection(db_path) as conn:
                 cursor = conn.cursor()
-                cursor.execute(query, params)
+                result = cursor.execute(query, params)
                 conn.commit()
-                return cursor.lastrowid
+                return result
         except sqlite3.OperationalError as e:
             if "locked" in str(e) and attempt < max_retries - 1:
                 time.sleep(0.1 * (attempt + 1))
