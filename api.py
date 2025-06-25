@@ -119,7 +119,7 @@ async def get_service_rep(number, user_id, rep_code, user_inventory):
     # find_rep = helper.execute_with_retry(db_path=db_path, query=f"SELECT * FROM users WHERE rep_code = '{rep_code}'")
     with helper.sqlite_connection(db_path) as conn:
         cursor = conn.cursor()
-        result = cursor.execute(f"SELECT * FROM users WHERE rep_code={rep_code}").fetchone()
+        result = cursor.execute(f"SELECT * FROM users WHERE rep_code='{rep_code}'").fetchone()
         conn.commit()
         print(result)
 
