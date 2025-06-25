@@ -115,8 +115,8 @@ async def get_service_iphone(data_limit, expire):
 
 @app.get("/get-service-rep/")
 async def get_service_rep(number, user_id, rep_code, user_inventory):
-    db_path = helper.get_db_path()
-    find_rep = helper.execute_with_retry(db_path=db_path, query=f"SELECT * FROM users WHERE rep_code = '{rep_code}'")
+    db_path = await helper.get_db_path()
+    find_rep = await helper.execute_with_retry(db_path=db_path, query=f"SELECT * FROM users WHERE rep_code = '{rep_code}'")
     print(find_rep)
 #     try:
 #         username, password, client_id = await helper.get_service(num=int(number), user_id=user_id)
