@@ -10,7 +10,7 @@ import os
 
 
 @contextmanager
-async def sqlite_connection(db_path):
+def sqlite_connection(db_path):
     conn = None
     try:
         conn = sqlite3.connect(db_path, timeout=10)
