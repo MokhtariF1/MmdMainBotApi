@@ -3,6 +3,48 @@ import string
 import config
 import random
 import json
+import sqlite3
+import time
+from contextlib import contextmanager
+import os
+
+
+@contextmanager
+async def sqlite_connection(db_path):
+    conn = None
+    try:
+        conn = sqlite3.connect(db_path, timeout=10)
+        conn.execute('PRAGMA journal_mode=WAL;')
+        yield conn
+    except sqlite3.Error as e:
+        print(f"Database error: {e}")
+        raise
+    finally:
+        if conn:
+            conn.close()
+
+
+async def execute_with_retry(db_path, query, params=(), max_retries=3):
+    for attempt in range(max_retries):
+        try:
+            with sqlite_connection(db_path) as conn:
+                cursor = conn.cursor()
+                cursor.execute(query, params)
+                conn.commit()
+                return cursor.lastrowid
+        except sqlite3.OperationalError as e:
+            if "locked" in str(e) and attempt < max_retries - 1:
+                time.sleep(0.1 * (attempt + 1))
+                continue
+            raise
+
+
+async def get_db_path():
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    parent_dir = os.path.dirname(current_dir)
+    db_path = os.path.join(parent_dir, config.BOT_DIR, "bot.db")
+    return db_path
+
 
 async def get_service(num, user_id):
     # Define the URL
@@ -110,6 +152,8 @@ async def get_service(num, user_id):
     #     return None, None
     # else:
     #     return username, password
+
+
 async def service_extension(plan_id, username):
     url = "https://api.connectix.vip/v1/seller/auth/login"
 
@@ -200,6 +244,7 @@ async def service_extension(plan_id, username):
     # else:
     #     return 200
 
+
 async def client_info(username):
     url = "https://api.connectix.vip/v1/seller/auth/login"
 
@@ -258,6 +303,7 @@ async def client_info(username):
     # except KeyError:
     #     return user_data
 
+
 # تنظیمات تلگرام
 TELEGRAM_API_URL = f"https://api.telegram.org/bot{config.BOT_TOKEN}/sendMessage"
 
@@ -285,7 +331,9 @@ async def get_iphone_service(expire, data_limit):
     }
     print(username)
     print(expire)
-    data = {"username": username,"proxies": {"vless": {}},"inbounds": {"vless": ["deco", "info", "upgrade"]},"expire": 0,"data_limit": data_limit,"data_limit_reset_strategy": "no_reset","status": "on_hold","note": "","on_hold_timeout": "2023-11-03T20:30:00","on_hold_expire_duration": expire}
+    data = {"username": username, "proxies": {"vless": {}}, "inbounds": {"vless": ["deco", "info", "upgrade"]},
+            "expire": 0, "data_limit": data_limit, "data_limit_reset_strategy": "no_reset", "status": "on_hold",
+            "note": "", "on_hold_timeout": "2023-11-03T20:30:00", "on_hold_expire_duration": expire}
     request = f"{config.MARZBAN_API_URL}user/"
     response = requests.post(request, json=data, headers=headers)
     sub = response.json()["subscription_url"]

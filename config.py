@@ -1,6 +1,7 @@
 EMAIL = "vorixvpn4784@connectix.panel"
 PASSWORD = "qSbsijwhwDTrqhja4HJT65!VrovQ!Y"
 BOT_TOKEN = "6801346087:AAHsc4IPGg1NuKEbmnNr2M_kTdHKuUilG7k"
+BOT_DIR = "MmdMainBot"
 REPORT_CHANNEL_ID = -1002151987895
 MARZBAN_API_URL = f"https://panel.panelmarzban.com/api/"
 API_ADDRESS = "https://app-panelmyqp.ir/get.php"

@@ -4,7 +4,6 @@ import helper
 import json
 import config
 
-
 app = FastAPI()
 
 
@@ -36,6 +35,7 @@ async def get_service(number, user_id):
             "status": 500,
         }
         return Response(json.dumps(response), 500)
+
 
 @app.get("/service-extension/")
 async def service_extension(number, username):
@@ -111,3 +111,36 @@ async def get_service_iphone(data_limit, expire):
             "sub_link": sub,
         }
         return Response(json.dumps(response), 200)
+
+
+@app.get("/get-service-rep/")
+async def get_service_rep(number, user_id, rep_code, user_inventory):
+    db_path = helper.get_db_path()
+    find_rep = helper.execute_with_retry(db_path=db_path, query=f"SELECT * FROM users WHERE rep_code = '{rep_code}'")
+    print(find_rep)
+#     try:
+#         username, password, client_id = await helper.get_service(num=int(number), user_id=user_id)
+#         if username is None or password is None:
+#             response = {
+#                 "status": 500,
+#             }
+#             return Response(json.dumps(response), 500)
+#         else:
+#             response = {
+#                 "status": 200,
+#                 "username": username,
+#                 "password": password,
+#             }
+#             text = f"""✅ #سرویس جدید
+# ➖➖➖➖➖➖➖➖➖
+# 👤نام کاربری : {username}
+# 🔑پسورد : {password}
+# """
+#             await helper.send_telegram_message(config.REPORT_CHANNEL_ID, text)
+#             return Response(json.dumps(response), 200)
+#     except Exception as e:
+#         print(e)
+#         response = {
+#             "status": 500,
+#         }
+#         return Response(json.dumps(response), 500)
