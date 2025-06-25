@@ -116,9 +116,16 @@ async def get_service_iphone(data_limit, expire):
 @app.get("/get-service-rep/")
 async def get_service_rep(number, user_id, rep_code, user_inventory):
     db_path = helper.get_db_path()
-    find_rep = helper.execute_with_retry(db_path=db_path, query=f"SELECT * FROM users WHERE rep_code = '{rep_code}'")
-    print(find_rep.fetchone())
+    # find_rep = helper.execute_with_retry(db_path=db_path, query=f"SELECT * FROM users WHERE rep_code = '{rep_code}'")
+    with helper.sqlite_connection(db_path) as conn:
+        cursor = conn.cursor()
+        result = cursor.execute(f"SELECT * FROM users WHERE rep_code={rep_code}").fetchone()
+        conn.commit()
+        print(result)
+
+    # print(find_rep.fetchone())
 #     try:
+
 #         username, password, client_id = await helper.get_service(num=int(number), user_id=user_id)
 #         if username is None or password is None:
 #             response = {
