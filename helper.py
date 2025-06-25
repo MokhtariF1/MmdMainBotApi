@@ -27,7 +27,8 @@ async def sqlite_connection(db_path):
 async def execute_with_retry(db_path, query, params=(), max_retries=3):
     for attempt in range(max_retries):
         try:
-            with sqlite_connection(db_path) as conn:
+            db = await sqlite_connection(db_path)
+            with db as conn:
                 cursor = conn.cursor()
                 cursor.execute(query, params)
                 conn.commit()
