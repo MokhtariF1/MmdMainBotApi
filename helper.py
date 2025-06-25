@@ -24,11 +24,10 @@ async def sqlite_connection(db_path):
             conn.close()
 
 
-async def execute_with_retry(db_path, query, params=(), max_retries=3):
+def execute_with_retry(db_path, query, params=(), max_retries=3):
     for attempt in range(max_retries):
         try:
-            db = await sqlite_connection(db_path)
-            with db as conn:
+            with sqlite_connection(db_path) as conn:
                 cursor = conn.cursor()
                 cursor.execute(query, params)
                 conn.commit()
@@ -40,7 +39,7 @@ async def execute_with_retry(db_path, query, params=(), max_retries=3):
             raise
 
 
-async def get_db_path():
+def get_db_path():
     current_dir = os.path.dirname(os.path.abspath(__file__))
     parent_dir = os.path.dirname(current_dir)
     db_path = os.path.join(parent_dir, config.BOT_DIR, "bot.db")
