@@ -179,44 +179,44 @@ async def service_extension_rep(number: int, username: str, rep_code: str, user_
         if result is None:
             return Response(json.dumps({"status": 404, "message": "user not found"}), 404)
         user_inventory = result[1]
-    service_price = amounts[number] // 2
-    if (user_inventory - service_price) < 0:
-        return Response(json.dumps({"status": 403, "message": "inventory is none!"}), 403)
-    try:
-        status = await helper.service_extension(plan_id=int(number), username=username)
-        if status is None:
-            response = {
-                "status": 500,
-            }
-            return Response(json.dumps(response), 500)
-        else:
-            if status == 500:
+        service_price = amounts[number] // 2
+        if (user_inventory - service_price) < 0:
+            return Response(json.dumps({"status": 403, "message": "inventory is none!"}), 403)
+        try:
+            status = await helper.service_extension(plan_id=int(number), username=username)
+            if status is None:
                 response = {
-                    "message": "an error to service extension",
                     "status": 500,
                 }
                 return Response(json.dumps(response), 500)
             else:
-                response = {
-                    "message": "plan added to user service!",
-                    "status": 200,
-                }
-                plan_name = plan_names[number]
-                rep_after_inventory = user_inventory - service_price
-                cursor.execute(f"UPDATE users SET inventory={rep_after_inventory} WHERE rep_code='{rep_code}'")
-                conn.commit()
-                text = f"""📣 جزئیات تمدید سرویس در ربات نماینده شما ثبت شد .
-                ▫️آیدی عددی کاربر : {user_id}
-                ▫️آیدی عددی نماینده : {result[0]}
-                ▫️نام کاربری کانفیگ :{username}
-                ▫️پلن سرویس : {plan_name}
-                ▫️موجودی نماینده قبل از خرید :{user_inventory} تومان
-                ▫️موجودی نماینده قبل از خرید : {rep_after_inventory}"""
-                await helper.send_telegram_message(config.REPORT_CHANNEL_ID, text)
-                return Response(json.dumps(response), 200)
-    except Exception as e:
-        print(e)
-        response = {
-            "status": 500,
-        }
-        return Response(json.dumps(response), 500)
+                if status == 500:
+                    response = {
+                        "message": "an error to service extension",
+                        "status": 500,
+                    }
+                    return Response(json.dumps(response), 500)
+                else:
+                    response = {
+                        "message": "plan added to user service!",
+                        "status": 200,
+                    }
+                    plan_name = plan_names[number]
+                    rep_after_inventory = user_inventory - service_price
+                    cursor.execute(f"UPDATE users SET inventory={rep_after_inventory} WHERE rep_code='{rep_code}'")
+                    conn.commit()
+                    text = f"""📣 جزئیات تمدید سرویس در ربات نماینده شما ثبت شد .
+                    ▫️آیدی عددی کاربر : {user_id}
+                    ▫️آیدی عددی نماینده : {result[0]}
+                    ▫️نام کاربری کانفیگ :{username}
+                    ▫️پلن سرویس : {plan_name}
+                    ▫️موجودی نماینده قبل از خرید :{user_inventory} تومان
+                    ▫️موجودی نماینده قبل از خرید : {rep_after_inventory}"""
+                    await helper.send_telegram_message(config.REPORT_CHANNEL_ID, text)
+                    return Response(json.dumps(response), 200)
+        except Exception as e:
+            print(e)
+            response = {
+                "status": 500,
+            }
+            return Response(json.dumps(response), 500)
