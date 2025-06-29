@@ -124,12 +124,14 @@ async def get_service(num, user_id):
         print("_____", response)
         if response["message"] == "client has been created":
             text_to_copy = response["text_to_copy"]
+            print(text_to_copy)
             username = text_to_copy.split("\n")[2][text_to_copy.split("\n")[2].index("username: ") + 11:].replace("`",
                                                                                                                   "")
             password = text_to_copy.split("\n")[3][text_to_copy.split("\n")[3].index("password: ") + 11:].replace("`",
                                                                                                                   "")
             return username, password, response["client_id"]
         else:
+            print("error_khorde")
             # print(response)
             return None, None, None
     # if num == 1:

@@ -127,43 +127,43 @@ async def get_service_rep(number: int, user_id: int, rep_code: str):
         if result is None:
             return Response(json.dumps({"status": 404, "message": "user not found"}), 404)
         user_inventory = result[1]
-    service_price = amounts[number] // 2
-    if (user_inventory - service_price) < 0:
-        return Response(json.dumps({"status": 403, "message": "inventory is none!"}), 403)
-    try:
+        service_price = amounts[number] // 2
+        if (user_inventory - service_price) < 0:
+            return Response(json.dumps({"status": 403, "message": "inventory is none!"}), 403)
+        try:
 
-        username, password, client_id = await helper.get_service(num=int(number), user_id=user_id)
-        if username is None or password is None:
+            username, password, client_id = await helper.get_service(num=int(number), user_id=user_id)
+            if username is None or password is None:
+                response = {
+                    "status": 500,
+                }
+                return Response(json.dumps(response), 500)
+            else:
+                response = {
+                    "status": 200,
+                    "username": username,
+                    "password": password,
+                }
+                plan_name = plan_names[number]
+                rep_after_inventory = user_inventory - service_price
+                cursor.execute(f"UPDATE users SET inventory={rep_after_inventory} WHERE rep_code='{rep_code}'")
+                conn.commit()
+                text = f"""📣 جزئیات ساخت اکانت در ربات نماینده شما ثبت شد .
+    ▫️آیدی عددی کاربر : {user_id}
+    ▫️آیدی عددی نماینده : {result[0]}
+    ▫️نام کاربری کانفیگ :{username}
+    ▫️رمز عبور کانفیگ :{password}
+    ▫️پلن سرویس : {plan_name}
+    ▫️موجودی نماینده قبل از خرید :{user_inventory} تومان
+    ▫️موجودی نماینده قبل از خرید : {rep_after_inventory}"""
+                await helper.send_telegram_message(config.REPORT_CHANNEL_ID, text)
+                return Response(json.dumps(response), 200)
+        except Exception as e:
+            print(e)
             response = {
                 "status": 500,
             }
             return Response(json.dumps(response), 500)
-        else:
-            response = {
-                "status": 200,
-                "username": username,
-                "password": password,
-            }
-            plan_name = plan_names[number]
-            rep_after_inventory = user_inventory - service_price
-            cursor.execute(f"UPDATE users SET inventory={rep_after_inventory} WHERE rep_code='{rep_code}'")
-            conn.commit()
-            text = f"""📣 جزئیات ساخت اکانت در ربات نماینده شما ثبت شد .
-▫️آیدی عددی کاربر : {user_id}
-▫️آیدی عددی نماینده : {result[0]}
-▫️نام کاربری کانفیگ :{username}
-▫️رمز عبور کانفیگ :{password}
-▫️پلن سرویس : {plan_name}
-▫️موجودی نماینده قبل از خرید :{user_inventory} تومان
-▫️موجودی نماینده قبل از خرید : {rep_after_inventory}"""
-            await helper.send_telegram_message(config.REPORT_CHANNEL_ID, text)
-            return Response(json.dumps(response), 200)
-    except Exception as e:
-        print(e)
-        response = {
-            "status": 500,
-        }
-        return Response(json.dumps(response), 500)
 
 
 @app.get("/service-extension-rep/")
